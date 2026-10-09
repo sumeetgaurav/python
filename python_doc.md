@@ -1,135 +1,99 @@
-# Python Files Documentation — Day 1
+# Python Learning Notes — Day 1
 
-Reference documentation for all Python files in this directory.
+## 1. Why Python
 
-## File Summary
+Python has a huge ecosystem of packages and libraries, which reduces time to market and helps automate work.
 
-| File | Description |
-|---|---|
-| `hello.py` | Beginner walkthrough of Python basics: variables, primitive types, and core data structures (list, dict, tuple, set). |
-| `cpu_check.py` | Takes a user-entered CPU usage value and classifies it as high, moderate, or normal. |
-| `real_cpu.py` | Monitors real-time CPU usage with `psutil` and flags it as healthy or unhealthy against a user-defined threshold. |
-| `system_utils.py` | Reusable utility module that collects live CPU, memory, and disk usage stats into a dictionary. |
-| `show_system_info.py` | CLI script that fetches and prints current system stats using `system_utils.get_system_info()`. |
-| `get_data.py` | Minimal example of fetching JSON data from a REST API using the `requests` library. |
-| `s3_utils.py` | Uploads a local file to an AWS S3 bucket using `boto3`. |
-| `api.py` | FastAPI web service exposing endpoints for a health check, live system metrics, and AWS S3 bucket listing. |
+- **Reference sites:** [python.org](https://www.python.org) and the [Python docs](https://docs.python.org) (using Python 3.14)
+- **Setup:** install Python and VS Code
 
----
+**Topics planned:**
 
-## File Details
-
-### `hello.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Demonstrates core Python syntax and data types |
-| Covers | `print()`, primitives (`str`, `float`, `int`, `bool`), `type()`, `list`, `dict`, `tuple`, `set` |
-| Input required | None |
-| Run | `python hello.py` |
-
-### `cpu_check.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Classifies a manually entered CPU usage value |
-| Input required | A numeric CPU percentage |
-| Run | `python cpu_check.py` |
-
-**Classification logic:**
-
-| Condition | Output |
-|---|---|
-| `cpu > 50` | CPU usage is high |
-| `20 < cpu < 50` | CPU usage is moderate |
-| otherwise | CPU usage is normal |
-
-### `real_cpu.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Live CPU monitoring against a user-defined threshold |
-| Library | `psutil` |
-| Input required | A CPU usage threshold (%) |
-| Behavior | Samples CPU usage 5 times (1-second interval each) |
-| Run | `python real_cpu.py` |
-
-| Condition | Output |
-|---|---|
-| Sampled usage > threshold | CPU usage is Unhealthy |
-| Sampled usage ≤ threshold | CPU usage is Healthy |
-
-### `system_utils.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Reusable module — not run directly |
-| Function | `get_system_info()` |
-| Returns | Dictionary with `CPU Usage`, `Memory Usage`, `Disk Usage` (all %) |
-| Used by | `show_system_info.py`, `api.py` |
-
-### `show_system_info.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | CLI wrapper around `system_utils.get_system_info()` |
-| Dependency | `system_utils.py` |
-| Run | `python show_system_info.py` |
-
-### `get_data.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Example of consuming a REST API |
-| Library | `requests` |
-| Target API | `https://fake-json-api.mock.beeceptor.com/users` |
-| Run | `python get_data.py` |
-
-### `s3_utils.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | Uploads a local file to AWS S3 |
-| Library | `boto3` |
-| Bucket | `devops-fde` (hardcoded) |
-| Requires | Valid AWS credentials |
-| Run | `python s3_utils.py` |
-
-### `api.py`
-
-| Field | Detail |
-|---|---|
-| Purpose | FastAPI service exposing system + AWS metrics over HTTP |
-| Libraries | `fastapi`, `uvicorn`, `boto3` |
-| Run | `uvicorn api:app --reload` |
-
-**Endpoints:**
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/hello` | Returns a simple greeting JSON message |
-| GET | `/metrics` | Returns live system metrics via `get_system_info()` |
-| GET | `/aws/s3/buckets` | Lists all S3 bucket names in the connected AWS account |
+- Variables, constants, conditions, loops, functions
+- Libraries, data types, and data structures
+- How APIs work
+- Creating an AI agent
+- Packaging and deploying it
+- Using an AI assistant for code
 
 ---
 
-## Dependency Map
+## 2. Data Types and Data Structures
 
-| File | Depends on |
+Data structures are ways of storing and organizing collections of data.
+
+| Type | Key Point |
 |---|---|
-| `api.py` | `system_utils.py` (`get_system_info`) |
-| `show_system_info.py` | `system_utils.py` (`get_system_info`) |
-| `cpu_check.py`, `real_cpu.py`, `hello.py`, `get_data.py`, `s3_utils.py` | Standalone — no internal dependencies |
+| **List** | Holds many different values |
+| **Dict** | Holds key-value pairs |
+| **Set** | Holds only unique values |
+| **Tuple** | Immutable — values can't be changed after creation |
+
+> **Note:** Tuple vs. list — tuple elements can still be accessed by index, but the tuple itself can't be modified after creation.
 
 ---
 
-## Required Packages by File
+## 3. Conditionals
 
-| Package | Required by |
+Python uses `if`, `elif`, and `else`.
+
+**Example scenario:** As an engineer, you check whether CPU usage is above 80%. Using the `psutil` library, you take the threshold as user input and send an alert if the CPU is above it.
+
+---
+
+## 4. Virtual Environments
+
+**Why:** Each project gets its own dedicated space on your system, isolated from other projects.
+
+| Step | Command |
 |---|---|
-| `psutil` | `real_cpu.py`, `system_utils.py`, `show_system_info.py`, `api.py` (`/metrics`) |
-| `requests` | `get_data.py` |
-| `boto3` | `s3_utils.py`, `api.py` (`/aws/s3/buckets`) |
-| `fastapi`, `uvicorn` | `api.py` |
+| Create | `python3.14 -m venv env` |
+| Activate | `env\Scripts\activate` |
+| Install packages | `pip install psutil` |
 
-`hello.py` and `cpu_check.py` use only the Python standard library.
+Creating the environment makes an `env` folder with its own Python inside — like a sandbox.
+
+---
+
+## 5. Use Case: CPU Health Check
+
+Check CPU usage against a user-provided threshold, sampled over about 5 seconds, and report whether the CPU is healthy.
+
+---
+
+## 6. APIs and Requests
+
+The `requests` library lets you interact with APIs.
+
+Two things to look at in a response:
+
+| Part | Description |
+|---|---|
+| Response | The HTTP response object itself (status code, headers, etc.) |
+| Content | The actual body/data returned by the API |
+
+---
+
+## 7. FastAPI
+
+**Install:**
+
+```bash
+pip install fastapi
+# or
+pip install "fastapi[standard]"
+```
+
+**Import:**
+
+```python
+from fastapi import FastAPI
+```
+
+`FastAPI` is a class.
+
+---
+
+## 8. Boto3
+
+Boto3 is the official AWS SDK (Software Development Kit) for Python, used for AWS automation.
